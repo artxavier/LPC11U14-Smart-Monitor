@@ -2,7 +2,7 @@
 
 ![Completed LPC11U14 monitoring prototype](images/board-finished.jpeg)
 
-> **Academic Note:** This project was developed as part of the **PBLE02 - Board Bring Up and Electronic Prototype Validation** course, instructed by Professor [Rodrigo Maximiano](LINK_TO_PROFILE). The course provided a hands-on "from scratch" engineering experience: we received a bare PCB and loose components, requiring us to manually solder the board, perform physical hardware validation, and troubleshoot electrical issues before developing the firmware. The software utilizes base hardware abstraction libraries provided by the [Osmar Bruno repository](LINK_TO_REPO).
+> **Academic Note:** This project was developed as part of the **PBLE02 - Board Bring Up and Electronic Prototype Validation** course, instructed by Professor [Rodrigo Maximiano](@rmaalmeida). The course provided a hands-on "from scratch" engineering experience: we received a bare PCB and loose components, requiring us to manually solder the board, perform physical hardware validation, and troubleshoot electrical issues before developing the firmware. The software utilizes base hardware abstraction libraries provided by [Osmar Bruno] (@BRun0442) (https://github.com/BRun0442/Anunciador-de-alarmes).
 ## 🎥 Video Demonstration
 
 [![Watch the demonstration video](images/board-finished.jpeg)](images/demo.mp4)
