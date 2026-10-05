@@ -1,0 +1,51 @@
+# ==========================================
+# Arquivos de Compilação (Build / Object)
+# ==========================================
+*.o
+*.obj
+*.elf
+*.axf
+*.map
+*.hex
+*.bin
+*.d
+*.su
+*.lst
+
+# ==========================================
+# Pastas de Build (Eclipse / MCUXpresso)
+# ==========================================
+Debug/
+Release/
+
+# ==========================================
+# Arquivos Locais da IDE (Eclipse / MCUXpresso)
+# ==========================================
+.metadata/
+*.launch
+# Nota: .project e .cproject geralmente SÃO comitados
+# para que outros possam importar o projeto facilmente.
+**/.settings/language.settings.xml
+*.fmx
+
+# Pacotes e executáveis locais
+*.exe
+*.rar
+*.zip
+
+# ==========================================
+# Pastas de Build (Keil uVision - se aplicável)
+# ==========================================
+Objects/
+Listings/
+*.uvguix.*
+*.uvoptx
+
+# ==========================================
+# Arquivos do Sistema Operacional (Windows/Linux)
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+$RECYCLE.BIN/
+*.swp

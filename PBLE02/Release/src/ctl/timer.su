@@ -1,2 +1,0 @@
-../src/ctl/timer.c:8:6:iniciaTimer	0	static
-../src/ctl/timer.c:24:6:TIMER32_0_IRQHandler	0	static
