@@ -1,6 +1,7 @@
 /*
  *  Created on: 5 de jul. de 2025
  *      Author: Osmar Bruno
+ * Modificações neste fork: Arthur Xavier
  */
 
 #ifndef PROGRAMA_H
@@ -13,13 +14,15 @@
     #include "util.h"
 	#include "./ctl/var.h"
 	#include "./ctl/stateMachine.h"
-	#include "./hardware/RTC.h"
+	#include "./ctl/event.h"
+	#include "./ctl/output.h"
 	#include "./hardware/LED.h"
 	#include "./hardware/Serial.h"
 	#include "./hardware/Teclado.h"
 	#include "./hardware/LCD.h"
 	#include "./hardware/ADC.h"
-    #include "./hardware/DAC.h"
+	#include "./hardware/encoder.h"
+	#include "./hardware/e2prom.h"
 
 	extern volatile bool flag_interrupt;
 	extern volatile uint32_t millis_counter;
