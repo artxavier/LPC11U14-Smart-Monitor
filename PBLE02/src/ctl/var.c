@@ -1,131 +1,73 @@
-#include "var.h"
-#include "../util.h"
-#include "../hardware/RTC.h"
+/*
+ * Modificações neste fork: Arthur Xavier
+ */
 
-//variaveis a serem armazenadas
+#include "var.h"
+
 static char state;
 static char language;
-static int time;
-static unsigned int alarmLevel_H;
-static unsigned int alarmLevel_L;
-static unsigned int sensorLevel;
-static float sensorLevel_V;
 
-static unsigned int seconds;
-static unsigned int minutes;
-static unsigned int hours;
+static int sensorLevel;
+static int alarmLevel_L;
+static int alarmLevel_H;
 
 void varInit(void) {
     state = 0;
-    time = 1000;
-    alarmLevel_H = 350;
-    alarmLevel_L = 250;
+    language = 0;
 
-    seconds = 0;
-    minutes = 58;
-    hours = 22;
-
-	setRTCSegundos(seconds);
-	setRTCMinutos(minutes);
-	setRTCHoras(hours);
+    sensorLevel = 0;
+    alarmLevel_L = 100; // Limite mínimo padrão
+    alarmLevel_H = 900; // Limite máximo padrão
 }
 
+// Funções de retorno e definição de estado
+char getState(void) { return state; }
+void setState(char newState) { state = newState; }
 
-char getState(void) {
-    return state;
-}
-void setState(char newState) {
-    state = newState;
-}
-
-
-int getTime(void) {
-    return time;
-}
-void setTime(int newTime) {
-    time = newTime;
-}
-
-
-int getAlarmLevel_H(void) {
-    return alarmLevel_H;
-}
-void setAlarmLevel_H(int newAlarmLevel) {
-    alarmLevel_H = newAlarmLevel;
-}
-
-
-int getAlarmLevel_L(void) {
-    return alarmLevel_L;
-}
-void setAlarmLevel_L(int newAlarmLevel) {
-    alarmLevel_L = newAlarmLevel;
-}
-
-
-int getSensorLevel(void)
-{
-	return sensorLevel;
-}
-void setSensorLevel(int newSensorLevel) {
-	sensorLevel_V = 3.3 * newSensorLevel / (1023.0 * GANHO_AMPOP);
-	sensorLevel = newSensorLevel;
-}
-
-float getSensorLevel_V(void)
-{
-	return sensorLevel_V;
-}
-
+// Funções de retorno e definição de língua
 char getLanguage(void){
-    return language;
+	return language;
 }
 void setLanguage(char newLanguage){
-    //so tem 2 linguas
-    //usando resto pra evitar colocar valor errado
-    language = newLanguage%2;
+	if((newLanguage == 0)||(newLanguage == 1)||(newLanguage == 2)){
+		language = newLanguage;
+	}
 }
 
-
-int getSeconds(void) {
-    return seconds;
+// Funções de retorno e definição do valor do ADC
+int getSensorLevel(void) {
+	return sensorLevel;
 }
-void setSeconds(int newSeconds) {
-    seconds = newSeconds;
-}
-
-
-int getMinutes(void) {
-    return minutes;
-}
-void setMinutes(int newMinutes) {
-    minutes = newMinutes;
+void setSensorLevel(int newLevel) {
+	sensorLevel = newLevel;
 }
 
+// Converte o valor do ADC (0 a 1023) para Volts (0 a 3.3V)
+float getSensorLevel_V(void) { return (sensorLevel * 3.3f) / 1023.0f; }
 
-int getHours(void) {
-    return hours;
+// Funções de definição e retorno do High e Low do alarme
+int getAlarmLevel_L(void) { return alarmLevel_L; }
+void setAlarmLevel_L(int newLevel) {
+	if(newLevel < 0){
+		alarmLevel_L = 0;
+	}
+	else if (newLevel > 1023){
+		alarmLevel_L = 1023;
+	}
+	else{
+		alarmLevel_L = newLevel;
+	}
 }
-void setHours(int newHours) {
-    hours = newHours;
-}
 
-void ajustaTempo(int* s, int* m, int* h)
-{
-    while (*s >= 60) { *s -= 60; (*m)++; }
-    while (*s < 0)   { *s += 60; (*m)--; }
-
-    while (*m >= 60) { *m -= 60; (*h)++; }
-    while (*m < 0)   { *m += 60; (*h)--; }
-
-    while (*h >= 24) *h -= 24;
-    while (*h < 0)   *h += 24;
-
-    int seg = *s;
-    int min = *m;
-    int hor = *h;
-
-    setSeconds(seg);
-    setMinutes(min);
-    setHours(hor);
+int getAlarmLevel_H(void) { return alarmLevel_H; }
+void setAlarmLevel_H(int newLevel) {
+	if(newLevel < 0){
+		alarmLevel_H = 0;
+	}
+	else if (newLevel > 1023){
+		alarmLevel_H = 1023;
+	}
+	else{
+		alarmLevel_H = newLevel;
+	}
 }

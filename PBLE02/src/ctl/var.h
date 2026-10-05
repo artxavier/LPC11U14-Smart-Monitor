@@ -1,34 +1,26 @@
+/* * File:   var.h
+ * Modificações neste fork: Arthur Xavier
+ */
+
 #ifndef VAR_H
-    #define	VAR_H
+#define VAR_H
 
-    void varInit(void);
+void varInit(void);
 
-    char getState(void);
-    void setState(char newState);
+// Máquina de Estados e Idioma
+char getState(void);
+void setState(char newState);
+char getLanguage(void);
+void setLanguage(char newLanguage);
+// Sensor ADC e Alarmes (High e Low)
+int getSensorLevel(void);
+void setSensorLevel(int newLevel);
+float getSensorLevel_V(void); // Retorna a tensão já convertida em Volts
 
-    int getTime(void);
-    void setTime(int newTime);
+int getAlarmLevel_L(void);
+void setAlarmLevel_L(int newLevel);
 
+int getAlarmLevel_H(void);
+void setAlarmLevel_H(int newLevel);
 
-    int getAlarmLevel_H(void);
-    void setAlarmLevel_H(int);
-    int getAlarmLevel_L(void);
-    void setAlarmLevel_L(int);
-
-    int getSensorLevel(void);
-    void setSensorLevel(int newSensorLevel);
-    float getSensorLevel_V(void);
-
-
-    char getLanguage(void);
-    void setLanguage(char newLanguage);
-
-    int getSeconds(void);
-    void setSeconds(int newSeconds);
-    int getMinutes(void);
-    void setMinutes(int newMinutes);
-    int getHours(void);
-    void setHours(int newHours);
-
-    void ajustaTempo(int*, int*, int*);
-#endif
+#endif /* VAR_H */

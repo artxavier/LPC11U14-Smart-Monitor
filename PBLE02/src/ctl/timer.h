@@ -1,10 +1,12 @@
 /*
- *  Created on: 5 de jul. de 2025
- *      Author: Osmar Bruno
+ * Modificações neste fork: Arthur Xavier
  */
 
 #ifndef TIMER_H
 #define TIMER_H
-	#include "../programa.h"
-	void iniciaTimer(void);
+
+#include "../programa.h"
+
+void iniciaTimer(void);
+
 #endif

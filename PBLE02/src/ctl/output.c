@@ -1,129 +1,86 @@
-#include <stdint.h>
+/*
+ * Modificações neste fork: Arthur Xavier
+ */
+
 #include "output.h"
-#include "../programa.h"
+#include "../hardware/LCD.h"
+#include "../hardware/LED.h"
+#include "timer.h"
+#include "stateMachine.h"
+#include "var.h"
 
-#define NUM_IDIOMAS 2
+#define NUM_IDIOMAS 3
 
-//msgs com 16 caracteres
-//1 msg por estado (apenas linha de cima)
+// Línguas do menu (Português, Inglês e Francês)
 static char * msgs[STATE_FIM][NUM_IDIOMAS] = {
-    {"Alterar alarme L", "Change alarm  L"},
-	{"Alterar alarme H", "Change alarm  H"},
-    {"Alterar tempo   ", "Change time    "},
-    {"Alterar idioma  ", "Change language"},
-	{"Horario         ", "Time           "},
-    {"Tensao no sensor", "Sensor voltage "},
-	{"CUIDADO!        ", "WARNING!       "}
+    {"Tensao Sensor  ", "Sensor Voltage ", "Tension Capteur "},
+    {"Conf. Alarmes  ", "Alarm Config   ", "Reg. de L'alarme"},
+    {"Alterar Idioma ", "Change Language", "Changer Langue  "},
+    {"**** ALARME ****", "**** ALARM **** ", "**** ALARME ****"}
 };
 
 void outputInit(void) {
-	iniciaLCD();
+    iniciaLCD();
+    iniciaLED();
+    desligaLED(1);
+    desligaLED(2);
 }
 
-void outputPrint(int numTela, int idioma) {
+// Printa a tela de acordo com o estado da máquina de estados
+void outputPrint(int numTela, int idioma, int editando) {
 
-    if (numTela == STATE_TEMPO) {
-        LCD_comando(0x80);
-        LCD_string(msgs[numTela][idioma]);
-        LCD_comando(0xC0);
-		LCD_int2Dig(getHours());
-		LCD_string(":");
-		LCD_int2Dig(getMinutes());
-		LCD_string(":");
-		LCD_int2Dig(getSeconds());
-		LCD_string("        ");
+    LCD_comando(0x80);
+    LCD_string(msgs[numTela][idioma]);
+
+    // Asterisco ou não caso em modo de edição de tela
+    if (editando) {
+        LCD_comando(0x8F);
+        LCD_string("*");
+    }
+    else if(!editando){
+        LCD_comando(0x8F);
+        LCD_string(" ");
     }
 
-    if (numTela == STATE_ALARME_L) {
-        float nivelAlarme = getAlarmLevel_L();
-        char tensao[4] = {0};
+    LCD_comando(0xC0);
 
-        floatParaString(3.3 * nivelAlarme / (1023 * GANHO_AMPOP), tensao);
+    // Tela principal
+    if (numTela == STATE_TENSAO) {
+        char str_val[8];
+        floatParaString(getSensorLevel_V(), str_val);
+        LCD_string("ADC:"); LCD_int(getSensorLevel());
+        LCD_string(" V:");  LCD_string(str_val); LCD_string("  ");
+    }
+    // Tela de alarme
+    else if (numTela == STATE_ALARME) {
+        if (editando == 1) LCD_string("*L:");
+        else               LCD_string("L:");
+        LCD_int(getAlarmLevel_L());
 
-        LCD_comando(0x80);
-        LCD_string(msgs[numTela][idioma]);
-        LCD_comando(0xC0);
-        LCD_int((int) nivelAlarme);
-        LCD_string("      ");
-        LCD_string(tensao);
-        LCD_string("V");
+        if (editando == 2) LCD_string(" *H:");
+        else               LCD_string("  H:");
+        LCD_int(getAlarmLevel_H());
+
+        LCD_string("  "); // Limpa sujeira residual
     }
 
-    if (numTela == STATE_ALARME_H) {
-        float nivelAlarme = getAlarmLevel_H();
-        char tensao[4] = {0};
-
-        floatParaString(3.3 * nivelAlarme / (1023 * GANHO_AMPOP), tensao);
-
-        LCD_comando(0x80);
-        LCD_string(msgs[numTela][idioma]);
-        LCD_comando(0xC0);
-        LCD_int((int) nivelAlarme);
-        LCD_string("      ");
-        LCD_string(tensao);
-        LCD_string("V");
+    // Tela de idioma
+    else if (numTela == STATE_IDIOMA) {
+        if (getLanguage() == 0) LCD_string("Portugues       ");
+        if (getLanguage() == 1) LCD_string("English         ");
+        if (getLanguage() == 2) LCD_string("Francais        ");
     }
 
-    if (numTela == STATE_IDIOMA) {
-        LCD_comando(0x80);
-        LCD_string(msgs[numTela][idioma]);
-        LCD_comando(0xC0);
-        if (getLanguage() == 0) {
-            LCD_string("Portugues       ");
-        }
-        if (getLanguage() == 1) {
-            LCD_string("English         ");
-        }
+    // Tela alarme disparado
+    else if (numTela == STATE_DISPARA) {
+        LCD_string("CRITICO: ");
+        LCD_int(getSensorLevel());
+        LCD_string("!   ");
+        ligaLED(1);
+        ligaLED(2);
+        delayMS(100);
+        desligaLED(1);
+        desligaLED(2);
+
     }
-
-    if (numTela == STATE_HORAS) {
-		LCD_comando(0x80);
-		LCD_string(msgs[numTela][idioma]);
-		LCD_comando(0xC0);
-		LCD_int2Dig(getHours());
-		LCD_string(":");
-		LCD_int2Dig(getMinutes());
-		LCD_string(":");
-		LCD_int2Dig(getSeconds());
-		LCD_string("        ");
-	}
-
-    if (numTela == STATE_SENSOR) {
-		float tensaoSensor = getSensorLevel();
-		char tensao[4] = {0};
-
-		floatParaString((float) (3.3 * tensaoSensor / (1023 * GANHO_AMPOP)), tensao);
-
-		LCD_comando(0x80);
-		LCD_string(msgs[numTela][idioma]);
-		LCD_comando(0xC0);
-		LCD_int((int) tensaoSensor);
-		LCD_string("      ");
-		LCD_string(tensao);
-		LCD_string("V");
-	}
-
-    if (numTela == STATE_OUT_OF_RANGE) {
-		float tensaoSensor = getSensorLevel();
-		char tensao[4] = {0};
-
-		floatParaString((float) (3.3 * tensaoSensor / (1023 * GANHO_AMPOP)), tensao);
-
-		LCD_comando(0x80);
-		LCD_string(msgs[numTela][idioma]);
-		LCD_comando(0xC0);
-
-		if(tensaoSensor < getAlarmLevel_L())
-		{
-			LCD_string("Abaixo:");
-		}else if(tensaoSensor > getAlarmLevel_H())
-		{
-			LCD_string("Acima:");
-		}
-
-		LCD_int((int) tensaoSensor);
-		LCD_string("/");
-		LCD_string(tensao);
-		LCD_string("V");
-	}
 }
