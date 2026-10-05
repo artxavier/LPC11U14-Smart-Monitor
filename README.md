@@ -2,7 +2,8 @@
 
 ![Completed LPC11U14 monitoring prototype](images/board-finished.jpeg)
 
-> **Academic Note:** This project was developed as part of the **PBLE02 - Board Bring Up and Electronic Prototype Validation** course, instructed by Professor [Rodrigo Maximiano](https://github.com/rmaalmeida). The course provided a hands-on "from scratch" engineering experience: we received a bare PCB and loose components, requiring us to manually solder the board, perform physical hardware validation, and troubleshoot electrical issues before developing the firmware. The software utilizes base hardware abstraction libraries provided by [Osmar Bruno](https://github.com/BRun0442/) [Anunciador de Alarmes](https://github.com/BRun0442/Anunciador-de-alarmes).
+> **Academic Note:** This project was developed as part of the **PBLE02 - Board Bring Up and Electronic Prototype Validation** course, instructed by Professor [Rodrigo Maximiano](https://github.com/rmaalmeida). The course provided a hands-on "from scratch" engineering experience: we received a bare PCB and loose components, requiring us to manually solder the board, perform physical hardware validation, and troubleshoot electrical issues before developing the firmware. The software builds on [Osmar Bruno's Anunciador de Alarmes](https://github.com/BRun0442/Anunciador-de-alarmes) and makes extensive use of NXP's own LPC11Uxx chip and LPCXpresso LPC11U14 board libraries, included in this repository as `lpc_chip_11uxx_lib/` and `nxp_lpcxpresso_11u14_board_lib/`.
+
 ## 🎥 Video Demonstration
 
 [![Watch the demonstration video](images/board-finished.jpeg)](images/demo.mp4)
