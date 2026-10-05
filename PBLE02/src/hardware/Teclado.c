@@ -1,88 +1,51 @@
 /*
  *  Created on: 5 de jul. de 2025
  *      Author: Osmar Bruno
+ * Modificações neste fork: Arthur Xavier
  */
 
 #include "../programa.h"
 
+#define SW0_PORT 1
+#define SW0_PIN 13
+#define SW1_PORT 0
+#define SW1_PIN 14
+#define SW2_PORT 0
+#define SW2_PIN 13
+
+static unsigned char valor = -1;
+
+// Definição dos pinos como entrada dos botões
 void iniciaTeclado(void)
 {
-    Chip_GPIO_SetPinDIR(LPC_GPIO, 0, 8, 0); //RIGHT
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 0, 9, 0); //UP
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 0, 22, 0); //LEFT
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 1, 31, 0); //ENTER
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 1, 21, 0); //DOWN
+    Chip_GPIO_SetPinDIR(LPC_GPIO, SW0_PORT, SW0_PIN, 0); //SW1
+	Chip_GPIO_SetPinDIR(LPC_GPIO, SW1_PORT, SW1_PIN, 0); //SW2
+	Chip_GPIO_SetPinDIR(LPC_GPIO, SW2_PORT, SW2_PIN, 0); //SW3
+
 }
 
-int lerBotaoPin(int port, int pin) {return !Chip_GPIO_GetPinState(LPC_GPIO, port, pin);}
+// Debounce dos e verificação dos 3 botões
+void kpdebounce() {
 
-int lerBotao(const char *botao)
-{
-    if(strcmp(botao, "up") == 0 || strcmp(botao, "UP") == 0)
-    {
-        return !Chip_GPIO_GetPinState(LPC_GPIO, 0, 9); //UP
-    }
-    else if(strcmp(botao, "down") == 0 || strcmp(botao, "DOWN") == 0)
-    {
-        return !Chip_GPIO_GetPinState(LPC_GPIO, 1, 21); //DOWN
-    }
-    else if(strcmp(botao, "left") == 0 || strcmp(botao, "LEFT") == 0)
-    {
-        return !Chip_GPIO_GetPinState(LPC_GPIO, 0, 22); //LEFT
-    }
-    else if(strcmp(botao, "right") == 0 || strcmp(botao, "RIGHT") == 0)
-    {
-        return !Chip_GPIO_GetPinState(LPC_GPIO, 0, 8); //RIGHT
-    }
-    else if(strcmp(botao, "enter") == 0 || strcmp(botao, "ENTER") == 0)
-    {
-        return !Chip_GPIO_GetPinState(LPC_GPIO, 1, 31); //ENTER
-    }
+	const int portas[3] = {SW0_PORT, SW1_PORT, SW2_PORT};
+	const int pinos[3] = {SW0_PIN, SW1_PIN, SW2_PIN};
 
-    return -1;
+	unsigned char temp = 0b0000;
+
+	for(int i = 0; i < 3; i++){
+		if(Chip_GPIO_GetPinState(LPC_GPIO,portas[i],pinos[i]) == 0){
+
+			for(volatile int delay = 0; delay<10000; delay++);
+
+			if(Chip_GPIO_GetPinState(LPC_GPIO,portas[i],pinos[i]) == 0){
+				temp |= (1 << i);
+			}
+		}
+	}
+
+	valor = temp;
 }
 
-void botaoLigaLED(void)
-{
-    //Le o botao enter
-    if(lerBotaoPin(1, 31))
-    {
-        ligaLED(0);
-        ligaLED(1);
-        ligaLED(2);
-        ligaLED(3);
-    }else{
-
-        //Le o botao down
-        if(lerBotaoPin(1, 21))
-        {
-            ligaLED(0);
-        }else {
-            desligaLED(0);
-        }
-
-        //Le o botao left
-        if(lerBotaoPin(0, 22))
-        {
-            ligaLED(1);
-        }else {
-            desligaLED(1);
-        }
-
-        //Le o botao up
-        if(lerBotaoPin(0, 9))
-        {
-            ligaLED(2);
-        }else {
-            desligaLED(2);
-        }
-
-        //Le o botao right
-        if(lerBotaoPin(0, 8))
-        {
-            ligaLED(3);
-        }else {
-            desligaLED(3);
-        }
-    }
+int checkButton() {
+	return valor;
 }

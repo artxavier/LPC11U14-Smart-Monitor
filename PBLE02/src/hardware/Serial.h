@@ -1,6 +1,7 @@
 /*
- *  Created on: 5 de jul. de 2025
- *      Author: Osmar Bruno
+ * Created on: 5 de jul. de 2025
+ * Author: Osmar Bruno
+ * Modificações neste fork: Arthur Xavier
  */
 
 #ifndef SERIAL_H
@@ -18,7 +19,9 @@
     uint8_t dadoRecebido(void);
     void enviaDado(uint8_t dado);
     void serialLigaLED(void);
-    void processaComandoSerial(void);
+
+    // A NOVA FUNÇÃO DA ARQUITETURA DE LINE BUFFER
+    int serial_TemComandoPronto(char* bufferDestino);
 
     void serial_enviaString(const char*);
     void serial_enviaInteiro(int);

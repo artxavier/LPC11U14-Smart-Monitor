@@ -1,6 +1,7 @@
 /*
  *  Created on: 5 de jul. de 2025
  *      Author: Osmar Bruno
+ * Modificações neste fork: Arthur Xavier
  */
 
 #include "../programa.h"
@@ -12,19 +13,21 @@ void toggleLED(int);
 
 void iniciaLED(void)
 {
-	Chip_Clock_EnablePeriphClock(SYSCTL_CLOCK_GPIO);
-    LPC_IOCON->PIO0[6] = 0;
 
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 1, 24, 1); //LED 0
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 0, 6, 1);  //LED 1
-    Chip_GPIO_SetPinDIR(LPC_GPIO, 0, 7, 1);  //LED 2
-	Chip_GPIO_SetPinDIR(LPC_GPIO, 1, 28, 1); //LED 3
+    LPC_SYSCTL->SYSAHBCLKCTRL |= (1 << 6);
+    LPC_SYSCTL->SYSAHBCLKCTRL |= (1 << 16);
+
+    LPC_IOCON->PIO0[12] = 0xD1;
+
+    LPC_IOCON->PIO0[11] = 0xD1;
 
 
-	Chip_GPIO_SetPinState(LPC_GPIO, 1, 24, 0);
-	Chip_GPIO_SetPinState(LPC_GPIO, 0, 6, 0);
-	Chip_GPIO_SetPinState(LPC_GPIO, 0, 7, 0);
-	Chip_GPIO_SetPinState(LPC_GPIO, 1, 28, 0);
+    LPC_GPIO->DIR[0] |= (1 << 11);
+    LPC_GPIO->DIR[0] |= (1 << 12);
+
+
+    LPC_GPIO->SET[0] = (1 << 11);
+    LPC_GPIO->SET[0] = (1 << 12);
 }
 
 void ligaLED(int led)
@@ -34,10 +37,10 @@ void ligaLED(int led)
             Chip_GPIO_SetPinState(LPC_GPIO, 1, 24, 1);
             break;
         case 1:
-            Chip_GPIO_SetPinState(LPC_GPIO, 0, 6, 1);
+            Chip_GPIO_SetPinState(LPC_GPIO, 0, 11, 1);
             break;
         case 2:
-            Chip_GPIO_SetPinState(LPC_GPIO, 0, 7, 1);
+            Chip_GPIO_SetPinState(LPC_GPIO, 0, 12, 1);
             break;
         case 3:
             Chip_GPIO_SetPinState(LPC_GPIO, 1, 28, 1);
@@ -54,10 +57,10 @@ void desligaLED(int led)
             Chip_GPIO_SetPinState(LPC_GPIO, 1, 24, 0);
             break;
         case 1:
-            Chip_GPIO_SetPinState(LPC_GPIO, 0, 6, 0);
+            Chip_GPIO_SetPinState(LPC_GPIO, 0, 11, 0);
             break;
         case 2:
-            Chip_GPIO_SetPinState(LPC_GPIO, 0, 7, 0);
+            Chip_GPIO_SetPinState(LPC_GPIO, 0, 12, 0);
             break;
         case 3:
             Chip_GPIO_SetPinState(LPC_GPIO, 1, 28, 0);
@@ -91,10 +94,10 @@ void toggleLED(int led)
 {
     switch(led) {
         case 0:
-            Chip_GPIO_SetPinToggle(LPC_GPIO, 1, 24);
+            Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 11);
             break;
         case 1:
-            Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 6);
+            Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 12);
             break;
         case 2:
             Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 7);
